@@ -1,29 +1,27 @@
 const express = require('express');
 const app = new express();
-
-// const path = require('path');
-const ejs = require('ejs');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
-// const BlogPost = require('./models/BlogPost.js');
 
+// fileUpload is used to upload image files in './controllers/storePost.js' controller
 const fileUpload = require('express-fileupload');
-
 const newPostController = require('./controllers/newPost');
 const homeController = require('./controllers/home');
 const storePostController = require('./controllers/storePost');
 const getPostController = require('./controllers/getPost');
-const validateMiddleware = require('./middleware/validateMiddleware');
 const newUserController = require('./controllers/newUser');
 const storeUserController = require('./controllers/storeUser');
 const loginController = require('./controllers/login');
 const loginUserController = require('./controllers/loginUser');
 const expressSession = require('express-session');
+const flash = require('connect-flash');
+
+const validateMiddleware = require('./middleware/validateMiddleware');
 const authMiddleware = require('./middleware/authMiddleware');
 const redirectIfAuthenticatedMiddleware = require('./middleware/redirectIfAuthenticatedMiddleware')
 const logoutController = require('./controllers/logout');
 
-const flash = require('connect-flash');
+
 
 
 global.loggedIn = null;
@@ -54,30 +52,24 @@ app.listen(4000, () => {
     console.log('App is listening on port 4000.');
 })
 
+// When user visit these routes, call these controllers
 app.get('/', homeController);
-
 app.get('/post/:id', getPostController);
-
 app.get('/posts/new', newPostController);
-
-
 app.get('/auth/register', newUserController);
-
 app.post('/posts/store', storePostController);
 app.post('/users/register', storeUserController);
-
 app.get('/auth/login', loginController);
 app.post('/users/login', loginUserController);
-
 app.get('/posts/new', authMiddleware, newPostController);
 app.post('/posts/store', authMiddleware, storePostController);
-
 app.get('/auth/register', redirectIfAuthenticatedMiddleware, newUserController);
 app.post('/users/register', redirectIfAuthenticatedMiddleware, storeUserController);
 app.get('/auth/login', redirectIfAuthenticatedMiddleware, loginController);
 app.post('/users/login',redirectIfAuthenticatedMiddleware, loginUserController)
-
 app.get('/auth/logout', logoutController);
+
+// this has to be the last controller
 app.use((req, res) => res.render('notFound'));
 
 
