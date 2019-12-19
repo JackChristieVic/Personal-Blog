@@ -7,7 +7,8 @@ const path = require('path');
 // const fileUpload = require('express-fileupload');
 // fileUpload is used to upload image files in './controllers/storePost.js' controller
 module.exports = (req, res) => {
-    
+    console.log('Print out the body')
+    console.log(req.body)
     // express-fileupload adds files property to the req object so that we can access the uploaded files using req.files
     let image = req.files.image;
     
@@ -16,13 +17,13 @@ module.exports = (req, res) => {
     image.mv(path.resolve(__dirname, '..', 'public/img/', image.name), async (error) => {
         // wait for mongoose to create the model for BlogPost with the following object in the DB. Here async / await is used instead of callback function
         await BlogPost.create({
+                // append the image property and userid property to req.body by using the spread operator. So before the ...red.body spread operation, req.body only has title abd body properties. After the operation, it has title, body, image and userid properties
                 ...req.body,
                 image: '/img/' + image.name,
                 userid: req.session.userId
             })
-        // .then(data => console.log('DATA: \n' + data))
-        .catch(error => console.log('ERROR: \n' + error));
-
+        .then(data => console.log('1 - req.body: \n' + data))
+        .catch(error => console.log('2 - ERROR: \n' + error));
         res.redirect('/');
     });
 }

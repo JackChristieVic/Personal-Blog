@@ -3,6 +3,11 @@ const app = new express();
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 
+// express session/cookie middleware
+const expressSession = require('express-session');
+const flash = require('connect-flash');
+
+
 // fileUpload is used to upload image files in './controllers/storePost.js' controller
 const fileUpload = require('express-fileupload');
 const newPostController = require('./controllers/newPost');
@@ -10,11 +15,12 @@ const homeController = require('./controllers/home');
 const storePostController = require('./controllers/storePost');
 const getPostController = require('./controllers/getPost');
 const newUserController = require('./controllers/newUser');
+
+// for user registration
 const storeUserController = require('./controllers/storeUser');
 const loginController = require('./controllers/login');
+// for user log in
 const loginUserController = require('./controllers/loginUser');
-const expressSession = require('express-session');
-const flash = require('connect-flash');
 
 const validateMiddleware = require('./middleware/validateMiddleware');
 const authMiddleware = require('./middleware/authMiddleware');
@@ -30,6 +36,7 @@ mongoose.connect('mongodb+srv://jack_vic:88886666@cluster0-swh3j.mongodb.net/my_
 {useNewUrlParser:true, useUnifiedTopology: true,  useCreateIndex: true});
 
 app.set('view engine', 'ejs');
+// app.set('trust proxy', 1)
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended:true}));
 app.use(fileUpload());
@@ -37,7 +44,8 @@ app.use('/posts/store', validateMiddleware);
 app.use(expressSession({
     secret: 'keyboard cat',
     resave: true,
-    saveUninitialized: true
+    saveUninitialized: true,
+    cookie: {}
 }));
 app.use("*", (req, res, next) => {
     loggedIn = req.session.userId;
@@ -58,12 +66,17 @@ app.get('/post/:id', getPostController);
 app.get('/posts/new', newPostController);
 app.get('/auth/register', newUserController);
 app.post('/posts/store', storePostController);
-app.post('/users/register', storeUserController);
+
 app.get('/auth/login', loginController);
+
+// for user log in
 app.post('/users/login', loginUserController);
 app.get('/posts/new', authMiddleware, newPostController);
 app.post('/posts/store', authMiddleware, storePostController);
 app.get('/auth/register', redirectIfAuthenticatedMiddleware, newUserController);
+
+// new user registration route and controller
+app.post('/users/register', storeUserController);
 app.post('/users/register', redirectIfAuthenticatedMiddleware, storeUserController);
 app.get('/auth/login', redirectIfAuthenticatedMiddleware, loginController);
 app.post('/users/login',redirectIfAuthenticatedMiddleware, loginUserController)

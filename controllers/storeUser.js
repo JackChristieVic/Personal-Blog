@@ -1,7 +1,10 @@
+// import User schema first
 const User = require('../models/User.js');
 const path = require('path');
 
+// for user registration
 module.exports = (req, res) => {
+    // Mongoose creates a database based on the User schema
     User.create(req.body, (error, user) => {
         if(error) {
             const validationErrors = Object.keys(error.errors).map(key => error.errors[key].message);
