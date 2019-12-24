@@ -18,11 +18,14 @@ module.exports = (req, res) => {
         // wait for mongoose to create the model for BlogPost with the following object in the DB. Here async / await is used instead of callback function
         await BlogPost.create({
                 // append the image property and userid property to req.body by using the spread operator. So before the ...red.body spread operation, req.body only has title abd body properties. After the operation, it has title, body, image and userid properties
+                // if not use ...req.body spread operator, then write dulicative code like this
+                // title: req.body.title,
+                // body: req.body.body,
                 ...req.body,
                 image: '/img/' + image.name,
                 userid: req.session.userId
             })
-        .then(data => console.log('1 - req.body: \n' + data))
+        // .then(data => console.log('1 - req.body: \n' + data))
         .catch(error => console.log('2 - ERROR: \n' + error));
         res.redirect('/');
     });

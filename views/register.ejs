@@ -24,6 +24,7 @@
   <div class="container">
     <div class="row">
       <div class="col-lg-8 col-md-10 mx-auto">
+        <!-- Loop through the errors array passed from newUser.js  -->
         <% if(errors != null && errors.length > 0) { %>
           <ul class="list-group"></ul>
             <% for(let i = 0; i < errors.length; i++) { %>

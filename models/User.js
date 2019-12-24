@@ -3,6 +3,7 @@ const Schema = mongoose.Schema;
 
 // encrypt password when user register an account
 const bcrypt = require('bcryptjs');
+// make sure the username is unique
 let uniqueValidator = require('mongoose-unique-validator');
 
 const UserSchema = new Schema({
@@ -10,15 +11,17 @@ const UserSchema = new Schema({
     username: {
         type: String,
         trim: true,
+        // the message will be displayed as alert when the user doesn't provide a username
         required: [true, "Please provide username"],
         // Mongoose checks uniqueness of the username before saving it to database
-        unique: true,
+        unique: [true, "This username is already taken"],
         minlength: 3
         // maxLength: 12
     },
     password: {
         type: String,
         trim: true,
+        // the message will be displayed as alert when the user doesn't provide a password
         required: [true, "Please provide password"],
         minlength: 6
         // maxLength: 12
